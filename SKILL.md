@@ -1,13 +1,15 @@
 ---
 name: lark-alert
-version: 1.3.0
-description: "飞书提醒：AI开始处理时自动发排队完成通知，复杂任务/Plan/Commit/异常/grill-me等场景自动发进度通知。Use when you want AI to proactively send Feishu/Lark notifications on queue completion, task progress, commits, errors, or user actions."
+version: 1.4.0
+description: "ALWAYS loaded — 飞书通知：每次收到用户新消息时先发排队完成通知，然后处理复杂任务/Plan/Commit/异常/grill-me等场景的进度通知。Use when processing ANY user message, before any task execution, Plan writing, Git commit, or error handling. Also use when user mentions lark-alert."
 metadata:
   requires:
     bins: ["lark-cli"]
 ---
 
 # Lark-Cli 消息发送规则
+
+**⚠️ 重要：每次收到用户新消息后，必须先发送飞书通知，再继续处理。**
 
 ## 核心机制
 
@@ -31,15 +33,15 @@ metadata:
 | 执行终端命令 | `## ℹ️ 【执行原因】` | `## ℹ️ 【删除旧文件】` |
 | grill-me | `## 🔥 【问题N→N+1】` | 见下方 |
 
-## 触发条件
+## 触发条件（按优先级）
 
-1. **AI开始处理（排队完成）**: 每次收到用户新消息后，**第一条响应内容**必须是飞书通知，告知用户"AI已开始处理"，然后再继续实际任务
-2. **复杂任务**: 开始、每步完成、结束时发消息
-3. **Plan执行**: 每一步都发消息
-4. **Git Commit**: 每次 commit 后发消息
-5. **任务异常**: 中断/异常/需用户操作时发消息
-6. **执行终端命令**: 执行前发消息
-7. **grill-me**: 每次收到用户回答时发消息（含：①上次决策总结 ②新问题+选项）
+0. **AI开始处理（排队完成）**: ⚠️ **最高优先级** — 每次收到用户新消息后，你的**第一条响应**必须是飞书通知（发送命令 + 通知内容），告知用户"AI已开始处理"。发完通知后，再继续回复用户的消息或执行任务
+1. **复杂任务**: 开始、每步完成、结束时发消息
+2. **Plan执行**: 每一步都发消息
+3. **Git Commit**: 每次 commit 后发消息
+4. **任务异常**: 中断/异常/需用户操作时发消息
+5. **执行终端命令**: 执行前发消息
+6. **grill-me**: 每次收到用户回答时发消息（含：①上次决策总结 ②新问题+选项）
 
 ## AI开始处理通知示例
 
@@ -53,9 +55,9 @@ metadata:
 ```
 用户发消息 → Trae 排队 → 排队结束 → AI 开始响应
                                               ↓
-                                    第一步：发送飞书通知（排队完成）
+                          🎉 最高优先级：发送飞书通知（排队完成）
                                               ↓
-                                    第二步：继续执行用户的实际任务
+                                    然后：继续执行用户的实际任务
 ```
 
 ## grill-me 示例
