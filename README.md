@@ -60,7 +60,7 @@
 
 #### 方式一：手动创建（推荐）
 
-创建文件 `~/.agents/skills/lark-alert/SKILL.md`（Trae 用户创建在 `~/.trae-cn/skills/飞书排队提醒/SKILL.md`），粘贴下方 [SKILL.md 完整内容](#skillmd-完整内容)。
+创建文件 `~/.agents/skills/lark-alert/SKILL.md`（Trae 用户创建在 `~/.trae-cn/skills/飞书排队提醒/SKILL.md`）。
 
 #### 方式二：一键安装（即将支持）
 
