@@ -1,7 +1,7 @@
 ---
 name: lark-alert
-version: 1.0.0
-description: "飞书提醒：复杂任务、Plan、Commit、异常、grill-me等场景自动发飞书通知。Use when you want AI to proactively send Feishu/Lark notifications on task progress, commits, errors, or user actions."
+version: 1.1.0
+description: "飞书提醒：复杂任务、Plan、Commit、异常、grill-me、排队完成等场景自动发飞书通知。Use when you want AI to proactively send Feishu/Lark notifications on task progress, commits, errors, or user actions including queue completion."
 metadata:
   requires:
     bins: ["lark-cli"]
@@ -27,6 +27,7 @@ metadata:
 | 需要用户操作 | `## 🎯 【需要用户操作】` | `## 🎯 【bash waiting】` |
 | 执行终端命令 | `## ℹ️ 【执行原因】` | `## ℹ️ 【删除旧文件】` |
 | grill-me | `## 🔥 【问题N→N+1】` | 见下方 |
+| 排队完成 | `## 🎉 【排队完成】` | `## 🎉 【Claude 3.5 Sonnet 排队完成】` |
 
 ## 触发条件
 
@@ -36,6 +37,15 @@ metadata:
 4. **任务异常**: 中断/异常/需用户操作时发消息
 5. **执行终端命令**: 执行前发消息
 6. **grill-me**: 每次收到用户回答时发消息（含：①上次决策总结 ②新问题+选项）
+7. **排队完成**: 当AI模型排队结束、开始处理请求时发消息
+
+## 排队完成示例
+
+```markdown
+## 🎉 【Claude 3.5 Sonnet 排队完成】
+
+已轮到你了！正在处理你的请求...
+```
 
 ## grill-me 示例
 
