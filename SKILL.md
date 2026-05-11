@@ -1,7 +1,7 @@
 ---
 name: lark-alert
-version: 1.1.0
-description: "飞书提醒：复杂任务、Plan、Commit、异常、grill-me、排队完成等场景自动发飞书通知。Use when you want AI to proactively send Feishu/Lark notifications on task progress, commits, errors, or user actions including queue completion."
+version: 1.3.0
+description: "飞书提醒：AI开始处理时自动发排队完成通知，复杂任务/Plan/Commit/异常/grill-me等场景自动发进度通知。Use when you want AI to proactively send Feishu/Lark notifications on queue completion, task progress, commits, errors, or user actions."
 metadata:
   requires:
     bins: ["lark-cli"]
@@ -9,7 +9,9 @@ metadata:
 
 # Lark-Cli 消息发送规则
 
-当用户提及"lark-alert"，在**命令开始执行**时，用lark-cli发送通知。每条消息必须保证发出后才进行下一步，异常时(HTTP 429除外)最多重试3次，仍失败则跳过。
+## 核心机制
+
+每条消息必须保证发出后才进行下一步，异常时(HTTP 429除外)最多重试3次，仍失败则跳过。
 
 ## 基础配置
 - **身份**: Bot (`--as bot`)  |  **目标群组**: `--chat-id oc_xxx`  |  **格式**: Markdown (`--markdown`)
@@ -18,6 +20,7 @@ metadata:
 
 | 场景 | 标题 | 示例 |
 |------|------|------|
+| AI开始处理（排队完成） | `## 🎉 【AI开始处理】` | `## 🎉 【Claude 3.5 Sonnet 开始处理】` |
 | 复杂任务开始 | `## 🚀 【名称】` | `## 🚀 【背包系统】` |
 | 复杂任务进度 | `## 📊 【名称 - 进度X/Y】` | `## 📊 【背包系统 - 进度2/5】` |
 | 复杂任务完成 | `## ✅ 【名称】` | `## ✅ 【背包系统】` |
@@ -27,24 +30,32 @@ metadata:
 | 需要用户操作 | `## 🎯 【需要用户操作】` | `## 🎯 【bash waiting】` |
 | 执行终端命令 | `## ℹ️ 【执行原因】` | `## ℹ️ 【删除旧文件】` |
 | grill-me | `## 🔥 【问题N→N+1】` | 见下方 |
-| 排队完成 | `## 🎉 【排队完成】` | `## 🎉 【Claude 3.5 Sonnet 排队完成】` |
 
 ## 触发条件
 
-1. **复杂任务**: 开始、每步完成、结束时发消息
-2. **Plan执行**: 每一步都发消息
-3. **Git Commit**: 每次 commit 后发消息
-4. **任务异常**: 中断/异常/需用户操作时发消息
-5. **执行终端命令**: 执行前发消息
-6. **grill-me**: 每次收到用户回答时发消息（含：①上次决策总结 ②新问题+选项）
-7. **排队完成**: 当AI模型排队结束、开始处理请求时发消息
+1. **AI开始处理（排队完成）**: 每次收到用户新消息后，**第一条响应内容**必须是飞书通知，告知用户"AI已开始处理"，然后再继续实际任务
+2. **复杂任务**: 开始、每步完成、结束时发消息
+3. **Plan执行**: 每一步都发消息
+4. **Git Commit**: 每次 commit 后发消息
+5. **任务异常**: 中断/异常/需用户操作时发消息
+6. **执行终端命令**: 执行前发消息
+7. **grill-me**: 每次收到用户回答时发消息（含：①上次决策总结 ②新问题+选项）
 
-## 排队完成示例
+## AI开始处理通知示例
 
 ```markdown
-## 🎉 【Claude 3.5 Sonnet 排队完成】
+## 🎉 【Claude 3.5 Sonnet 开始处理】
 
 已轮到你了！正在处理你的请求...
+```
+
+**执行流程：**
+```
+用户发消息 → Trae 排队 → 排队结束 → AI 开始响应
+                                              ↓
+                                    第一步：发送飞书通知（排队完成）
+                                              ↓
+                                    第二步：继续执行用户的实际任务
 ```
 
 ## grill-me 示例
